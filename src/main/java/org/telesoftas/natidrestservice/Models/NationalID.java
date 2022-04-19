@@ -1,11 +1,10 @@
 package org.telesoftas.natidrestservice.Models;
 
-import org.jetbrains.annotations.NotNull;
+import org.telesoftas.validators.Utils;
 
 import javax.persistence.*;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 public class NationalID {
@@ -17,7 +16,7 @@ public class NationalID {
     @Column
     private String gender;
     @Column
-    private Date birthDate;
+    private LocalDate birthDate;
 
     public NationalID() {
 
@@ -25,24 +24,9 @@ public class NationalID {
 
     public NationalID(long nationalID) throws ParseException {
         this.nationalID = nationalID;
-        this.gender = parseGender(nationalID);
-        this.birthDate = parseBirthDate(nationalID);
+        this.gender = Utils.parseGender(nationalID);
+        this.birthDate = Utils.parseBirthDate(nationalID);
 
-    }
-
-    private Date parseBirthDate(long nationalID) throws ParseException {
-        String strDate = String.valueOf(nationalID).substring(1, 7);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd");
-        dateFormat.setLenient(false);
-        return dateFormat.parse(strDate);
-    }
-
-    private @NotNull String parseGender(long nationalID) {
-        int genderDigit = Character.getNumericValue(String.valueOf(nationalID).charAt(0));
-        if (genderDigit == 3 || genderDigit == 5) {
-            return "male";
-        }
-        return "female";
     }
 
     public long getId() {
@@ -69,11 +53,11 @@ public class NationalID {
         this.gender = gender;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 }

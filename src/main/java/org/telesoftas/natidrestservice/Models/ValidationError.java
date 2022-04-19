@@ -38,8 +38,9 @@ public class ValidationError {
         return errorMessage;
     }
 
-    public void setErrorMessage(String errorMessage) {
+    public ValidationError setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+        return this;
     }
 
     public String getErrorCode() {
