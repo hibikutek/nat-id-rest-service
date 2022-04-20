@@ -30,4 +30,11 @@ public class NationalIDAdvice {
     String internalNationalIDParseHandler(@NotNull InternalNationalIDParseException e) {
         return e.getMessage();
     }
+
+    @ResponseBody
+    @ExceptionHandler(NationalIDFileIOException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    String nationalIDFileIOHandler(@NotNull NationalIDFileIOException e) {
+        return e.getMessage();
+    }
 }
