@@ -1,17 +1,15 @@
 package org.telesoftas.natidrestservice.Models;
 
-import org.springframework.http.HttpStatus;
-
 import javax.persistence.*;
 
 @Entity
-public class ValidationError extends NationalIDIndexedEntity{
+public class ValidationError implements NationalIDIndexedEntity{
     @Id
     private Long nationalID;
     @Column
     private String errorMessage;
     @Column
-    private HttpStatus errorCode;
+    private int errorCode;
 
     public ValidationError() {
 
@@ -30,21 +28,19 @@ public class ValidationError extends NationalIDIndexedEntity{
         return this;
     }
 
-    public HttpStatus getErrorCode() {
+    public int getErrorCode() {
         return errorCode;
     }
 
-    public ValidationError setErrorCode(HttpStatus errorCode) {
+    public ValidationError setErrorCode(int errorCode) {
         this.errorCode = errorCode;
         return this;
     }
 
-    @Override
     public long getNationalID() {
         return nationalID;
     }
 
-    @Override
     public void setNationalID(long nationalID) {
         this.nationalID = nationalID;
     }

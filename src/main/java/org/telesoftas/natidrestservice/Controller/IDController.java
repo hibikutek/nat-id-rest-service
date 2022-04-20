@@ -1,7 +1,7 @@
 package org.telesoftas.natidrestservice.Controller;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.spel.InternalParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.telesoftas.NatIDValidator;
@@ -11,12 +11,12 @@ import org.telesoftas.natidrestservice.Models.NationalIDIndexedEntity;
 import org.telesoftas.natidrestservice.Models.ValidationError;
 import org.telesoftas.natidrestservice.Repo.NationalIDRepo;
 import org.telesoftas.natidrestservice.Repo.ValidationErrorRepo;
-import org.telesoftas.natidrestservice.Response.InternalNationalIDParseException;
 import org.telesoftas.natidrestservice.Response.NationalIDNotFoundException;
 import org.telesoftas.natidrestservice.Response.MalformedNationalIDException;
 
-import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class IDController {
@@ -26,7 +26,7 @@ public class IDController {
     private ValidationErrorRepo validationErrorRepo;
 
 
-    @GetMapping(value = "ids/{nationalID}")
+    @GetMapping(value = "id/{nationalID}")
     public NationalID getOne(@PathVariable Long nationalID) {
         return nationalIDRepo.findById(nationalID)
                 .orElseThrow(() -> new NationalIDNotFoundException(nationalID));
@@ -37,27 +37,34 @@ public class IDController {
         return nationalIDRepo.findAll();
     }
 
-    @PostMapping(value = "/ids")
-    public NationalIDIndexedEntity saveOne(@RequestBody Long nationalID) {
+    @PostMapping(value = "/id")
+    public NationalID saveOne(@RequestBody Long nationalID) {
         Result result = NatIDValidator.validateID(nationalID);
         if (result.isValid()) {
-            try {
-                return nationalIDRepo.save(new NationalID(nationalID));
-            } catch (ParseException e) {
-                e.printStackTrace();
-                ValidationError validationError = new ValidationError(nationalID)
-                        .setErrorMessage("ID could not be parsed")
-                        .setErrorCode(HttpStatus.INTERNAL_SERVER_ERROR);
-                validationErrorRepo.save(validationError);
-                throw new InternalNationalIDParseException(validationError);
-
-            }
+            return nationalIDRepo.save(new NationalID(nationalID));
         } else {
             ValidationError validationError = new ValidationError(nationalID)
                     .setErrorMessage(result.getMessage())
-                    .setErrorCode(HttpStatus.BAD_REQUEST);
+                    .setErrorCode(HttpStatus.BAD_REQUEST.value());
             validationErrorRepo.save(validationError);
             throw new MalformedNationalIDException(validationError);
         }
+    }
+
+    @PostMapping(value = "/ids")
+    public Map<Result, NationalIDIndexedEntity> saveAll(@RequestBody @NotNull List<Long> nationalIDList) {
+        Map<Result, NationalIDIndexedEntity> results = new HashMap<>();
+        for (Long nationalID : nationalIDList) {
+            Result result = NatIDValidator.validateID(nationalID);
+            if (result.isValid()) {
+                results.put(result, nationalIDRepo.save(new NationalID(nationalID)));
+
+            } else {
+                results.put(result, validationErrorRepo.save(new ValidationError(nationalID)
+                        .setErrorMessage(result.getMessage())
+                        .setErrorCode(HttpStatus.BAD_REQUEST.value())));
+            }
+        }
+        return results;
     }
 }

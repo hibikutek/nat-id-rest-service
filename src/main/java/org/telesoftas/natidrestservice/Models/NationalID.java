@@ -7,7 +7,7 @@ import java.text.ParseException;
 import java.time.LocalDate;
 
 @Entity
-public class NationalID extends NationalIDIndexedEntity {
+public class NationalID implements NationalIDIndexedEntity{
     @Id
     private Long nationalID;
     @Column
@@ -19,7 +19,7 @@ public class NationalID extends NationalIDIndexedEntity {
 
     }
 
-    public NationalID(long nationalID) throws ParseException {
+    public NationalID(long nationalID) {
         this.nationalID = nationalID;
         this.gender = Utils.parseGender(nationalID);
         this.birthDate = Utils.parseBirthDate(nationalID);
@@ -41,13 +41,11 @@ public class NationalID extends NationalIDIndexedEntity {
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
-
-    @Override
+    
     public long getNationalID() {
         return nationalID;
     }
 
-    @Override
     public void setNationalID(long nationalID) {
         this.nationalID = nationalID;
     }
