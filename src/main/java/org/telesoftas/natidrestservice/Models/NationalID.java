@@ -7,12 +7,9 @@ import java.text.ParseException;
 import java.time.LocalDate;
 
 @Entity
-public class NationalID {
+public class NationalID extends NationalIDIndexedEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column
-    private long nationalID;
+    private Long nationalID;
     @Column
     private String gender;
     @Column
@@ -29,22 +26,6 @@ public class NationalID {
 
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public long getNationalID() {
-        return nationalID;
-    }
-
-    public void setNationalID(long nationalID) {
-        this.nationalID = nationalID;
-    }
-
     public String getGender() {
         return gender;
     }
@@ -59,5 +40,15 @@ public class NationalID {
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
+    }
+
+    @Override
+    public long getNationalID() {
+        return nationalID;
+    }
+
+    @Override
+    public void setNationalID(long nationalID) {
+        this.nationalID = nationalID;
     }
 }
