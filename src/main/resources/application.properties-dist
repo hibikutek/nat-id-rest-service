@@ -1,0 +1,6 @@
+spring.datasource.url={url}
+spring.datasource.username={username}
+spring.datasource.password={password}
+spring.jpa.hibernate.ddl-auto=update
+spring.servlet.multipart.max-file-size=128MB
+spring.servlet.multipart.max-request-size=128MB
